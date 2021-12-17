@@ -1,4 +1,5 @@
-import { MainPage } from "./MainPage"
+import React from "react";
+import { MainPage } from "./mainpage";
 
 const App = () => {
   return (
