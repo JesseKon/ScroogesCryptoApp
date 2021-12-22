@@ -4,6 +4,7 @@ import "react-datepicker/dist/react-datepicker.css"
 
 import { GetLongestDownwardTrend } from "./helpers/DownwardTrend";
 import { GetHighestTradingVolume } from "./helpers/TradingVolume";
+import { GetWhenToBuyAndSell } from "./helpers/WhenToBuyAndSell";
 
 
 export const MainPage = () => {
@@ -11,10 +12,9 @@ export const MainPage = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
-  const [longestDownwardTrend, setLongestDownwardTrend] = useState({startDate: "", endDate: "", duration: 0})
-  const [highestTradingVolume, setHighestTradingVolume] = useState({date: "", volume: 0.0});
-
-  const [outputJson, setOutputJson] = useState();
+  const [longestDownwardTrend, setLongestDownwardTrend] = useState({});
+  const [highestTradingVolume, setHighestTradingVolume] = useState({});
+  const [whenToBuyAndSell, setWhenToBuyAndSell] = useState({});
 
   // Check server status
   useEffect(() => {
@@ -47,10 +47,10 @@ export const MainPage = () => {
 
     const response = await fetch("http://localhost:8000/api/getData", request);
     const data = await response.json();
-    setOutputJson(data);  // For debugging only
 
     setLongestDownwardTrend(GetLongestDownwardTrend(data));
     setHighestTradingVolume(GetHighestTradingVolume(data));
+    setWhenToBuyAndSell(GetWhenToBuyAndSell(data));
   }
 
 
@@ -68,19 +68,48 @@ export const MainPage = () => {
         <input type="submit"></input>
       </form>
 
-      <p>{JSON.stringify(outputJson)}</p>
-
       <div>
         <h3>Longest downward trend:</h3>
-        Start date: {longestDownwardTrend.startDate} <br />
-        End date: {longestDownwardTrend.endDate} <br />
-        Duration: {longestDownwardTrend.duration}
+
+        {longestDownwardTrend.duration === 0 &&
+          <div>
+            There was no downward trend.
+          </div>
+        }
+
+        {longestDownwardTrend.duration > 0 &&
+          <div>
+            Start date: {longestDownwardTrend.startDate.slice(0, 10)} <br />
+            End date: {longestDownwardTrend.endDate.slice(0, 10)} <br />
+            Duration: {longestDownwardTrend.duration}
+          </div>
+        }
       </div>
 
       <div>
         <h3>Highest trading volume:</h3>
+
         Date: {highestTradingVolume.date} <br />
         Volume: {highestTradingVolume.volume}
+      </div>
+
+      <div>
+        <h3>When to buy and sell:</h3>
+
+        {!whenToBuyAndSell.shouldBuy &&
+          <div>
+            Should not buy.
+          </div>
+        }
+
+        {whenToBuyAndSell.shouldBuy &&
+          <div>
+            Buy date: {whenToBuyAndSell.buyDate.slice(0, 10)} <br />
+            Buy price: {whenToBuyAndSell.buyPrice} <br />
+            Sell date: {whenToBuyAndSell.sellDate.slice(0, 10)} <br />
+            Sell price: {whenToBuyAndSell.sellPrice}
+          </div>
+        }
       </div>
 
     </div>

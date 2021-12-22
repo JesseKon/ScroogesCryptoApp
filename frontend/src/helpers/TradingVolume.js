@@ -1,7 +1,6 @@
 /**
  * Find the highest trading volume among given data
  */
-
 export const GetHighestTradingVolume = (data) => {
   let highestTradingVolume = {
     date: "",
