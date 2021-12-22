@@ -1,41 +1,28 @@
 /**
- * 
- * @param {*} data 
- * @returns 
+ * Find the longest downward trend among given data
  */
 
 export const GetLongestDownwardTrend = (data) => {
-
-  // Find all downward trends
   let downwardTrend = {
-    startDate: "",
+    startDate: data[0].date,
     endDate: "",
-    duration: -1  // Do not count the current day
+    duration: -1  // Do not count the first day
   };
 
   let downwardTrends = [];
-
   let currentPrice = Infinity;
-  let currentlyDownwardTrending = false;
 
   data.forEach(element => {
 
     // Trend ongoing
     if (element.price < currentPrice) {
       currentPrice = element.price;
-
-      if (!currentlyDownwardTrending) {
-        downwardTrend.startDate = element.date;
-        currentlyDownwardTrending = true;
-      }
-
       downwardTrend.endDate = element.date;
       ++downwardTrend.duration;
     }
 
     // Trend ended
     else {
-      console.log(downwardTrend);
       downwardTrends.push({
         startDate: downwardTrend.startDate,
         endDate: downwardTrend.endDate, 
@@ -44,9 +31,8 @@ export const GetLongestDownwardTrend = (data) => {
 
       downwardTrend.startDate = element.date;
       downwardTrend.endDate = "";
-      downwardTrend.duration = -1;
+      downwardTrend.duration = 0;
       currentPrice = Infinity;
-      currentlyDownwardTrending = false;
     }
   })
 

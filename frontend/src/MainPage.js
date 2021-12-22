@@ -51,7 +51,6 @@ export const MainPage = () => {
 
     setLongestDownwardTrend(GetLongestDownwardTrend(data));
     setHighestTradingVolume(GetHighestTradingVolume(data));
-
   }
 
 
@@ -69,21 +68,20 @@ export const MainPage = () => {
         <input type="submit"></input>
       </form>
 
-    <p>{JSON.stringify(outputJson)}</p>
+      <p>{JSON.stringify(outputJson)}</p>
 
-    <div>
-      <h3>Longest downward trend:</h3>
-      Start date: {longestDownwardTrend.startDate} <br />
-      End date: {longestDownwardTrend.endDate} <br />
-      Duration: {longestDownwardTrend.duration}
-    </div>
+      <div>
+        <h3>Longest downward trend:</h3>
+        Start date: {longestDownwardTrend.startDate} <br />
+        End date: {longestDownwardTrend.endDate} <br />
+        Duration: {longestDownwardTrend.duration}
+      </div>
 
-    <div>
-      <h3>Highest trading volume:</h3>
-      Date: {highestTradingVolume.date} <br />
-      Volume: {highestTradingVolume.volume}
-    </div>
-
+      <div>
+        <h3>Highest trading volume:</h3>
+        Date: {highestTradingVolume.date} <br />
+        Volume: {highestTradingVolume.volume}
+      </div>
 
     </div>
   );
