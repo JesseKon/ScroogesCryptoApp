@@ -2,11 +2,19 @@ import React, { useEffect, useState } from "react"
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"
 
+import { GetLongestDownwardTrend } from "./helpers/DownwardTrend";
+import { GetHighestTradingVolume } from "./helpers/TradingVolume";
+
+
 export const MainPage = () => {
   const [serverStatus, setServerStatus] = useState("Waiting server status...");
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const [output, setOutput] = useState();
+
+  const [longestDownwardTrend, setLongestDownwardTrend] = useState({startDate: "", endDate: "", duration: 0})
+  const [highestTradingVolume, setHighestTradingVolume] = useState({date: "", volume: 0.0});
+
+  const [outputJson, setOutputJson] = useState();
 
   // Check server status
   useEffect(() => {
@@ -39,7 +47,11 @@ export const MainPage = () => {
 
     const response = await fetch("http://localhost:8000/api/getData", request);
     const data = await response.json();
-    setOutput(data);
+    setOutputJson(data);  // For debugging only
+
+    setLongestDownwardTrend(GetLongestDownwardTrend(data));
+    setHighestTradingVolume(GetHighestTradingVolume(data));
+
   }
 
 
@@ -57,7 +69,21 @@ export const MainPage = () => {
         <input type="submit"></input>
       </form>
 
-    <p>{JSON.stringify(output)}</p>
+    <p>{JSON.stringify(outputJson)}</p>
+
+    <div>
+      <h3>Longest downward trend:</h3>
+      Start date: {longestDownwardTrend.startDate} <br />
+      End date: {longestDownwardTrend.endDate} <br />
+      Duration: {longestDownwardTrend.duration}
+    </div>
+
+    <div>
+      <h3>Highest trading volume:</h3>
+      Date: {highestTradingVolume.date} <br />
+      Volume: {highestTradingVolume.volume}
+    </div>
+
 
     </div>
   );

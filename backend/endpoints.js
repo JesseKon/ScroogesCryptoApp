@@ -39,6 +39,8 @@ router.post("/getData", async (req, res) => {
   const response = await fetch(url);
   const data = await response.json();
 
+  // TODO: fail check
+
   /**
    * Iterate through the response data
    * Only the first result from each day is needed
@@ -50,8 +52,8 @@ router.post("/getData", async (req, res) => {
 
   for (let i = 0; i < data.prices.length; ++i) {
     /**
-     * CoinGecko's unix time might not be exactly at 0000 UCT
-     * take the closest one after 0000 UCT
+     * CoinGecko's unix time might not be exactly at 0000 UTC
+     * take the closest one after 0000 UTC
      * Also, CoinGecko's unix time is in milliseconds, hence division by 1000
      */
     if (data.prices[i][0] / 1000 >= currentDateInUnixTime) {
@@ -67,7 +69,7 @@ router.post("/getData", async (req, res) => {
       });
 
       ++dateCounter;
-      
+
       currentDateInUnixTime += oneDayInUnixTime;
       if (currentDateInUnixTime >= endDateUnixTime)
         break;
