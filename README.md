@@ -1,15 +1,17 @@
 # Scrooge's Crypto App
+An app to inspect cryptocurrency prices in given time range.
+![](./pic.png)
 
 ## Installation
 1. Install npm
 
-2. Download backend packages
+2. Install backend packages
 ```
 cd backend
 npm install
 ```
 
-3. Download frontend packages
+3. Install frontend packages
 ```
 cd frontend
 npm install

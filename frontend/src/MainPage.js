@@ -1,29 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { View, Text } from "react-native";
-//import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 
-import { currenciesFromOptions, currenciesToOptions } from "./helpers/Currencies";
+import { currenciesOptions, vsCurrenciesOptions } from "./helpers/Currencies";
 import { GetChartDataPoints } from "./helpers/ChartDataPoints";
 import { GetLongestDownwardTrend } from "./helpers/DownwardTrend";
 import { GetHighestTradingVolume } from "./helpers/TradingVolume";
 import { GetWhenToBuyAndSell } from "./helpers/WhenToBuyAndSell";
+
+import { ComponentServerStatus } from "./components/mainpage/ServerStatus";
+import { ComponentTrend } from "./components/mainpage/Trend";
+import { ComponentTradingVolume } from "./components/mainpage/TradingVolume";
 
 
 export const MainPage = () => {
   const [serverStatus, setServerStatus] = useState("Waiting server status...");
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const [currencyFrom, setCurrencyFrom] = useState(currenciesFromOptions[0].value);
-  const [currencyTo, setCurrencyTo] = useState(currenciesToOptions[0].value);
+  const [currency, setCurrency] = useState(currenciesOptions[0].value);
+  const [vsCurrency, setVsCurrency] = useState(vsCurrenciesOptions[0].value);
 
   const [chartDataPoints, setChartDataPoints] = useState({});
   const [longestDownwardTrend, setLongestDownwardTrend] = useState({});
   const [highestTradingVolume, setHighestTradingVolume] = useState({});
   const [whenToBuyAndSell, setWhenToBuyAndSell] = useState({});
-  const [dataIsSet, setDataIsSet] = useState(false);
-
+  const [showResults, setShowResults] = useState(false);
 
 
   // Check server status
@@ -52,8 +52,8 @@ export const MainPage = () => {
       body: JSON.stringify({
         startDate: startDate,
         endDate: endDate,
-        currencyFrom: currencyFrom,
-        currencyTo: currencyTo
+        currency: currency,
+        vsCurrency: vsCurrency
       })
     };
 
@@ -64,19 +64,17 @@ export const MainPage = () => {
     setLongestDownwardTrend(GetLongestDownwardTrend(data));
     setHighestTradingVolume(GetHighestTradingVolume(data));
     setWhenToBuyAndSell(GetWhenToBuyAndSell(data));
-    setDataIsSet(true);
+    setShowResults(data[0] !== undefined); // Show results only if we have something to show
   }
 
 
   return (
     <View style={{flexDirection: "column", flex: 1, padding: "16px"}}>
 
-      <View style={{flex: 1, padding: "8px"}}>
-        <Text>
-          {serverStatus}
-        </Text>
+      {/* Server status */}
+      <View style={{flex: 1, margin: "8px"}}>
+        <ComponentServerStatus serverStatus={serverStatus} />
       </View>
-
 
       <View style={{flexDirection: "row", padding: "8px"}}>
 
@@ -87,26 +85,24 @@ export const MainPage = () => {
               <View style={{flex: 1, margin: "8px"}}>
                 <Text>Start date: </Text>
                 <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                {/* <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} /> */}
               </View>
               
               <View style={{flex: 1, margin: "8px"}}>
                 <Text>End date: </Text>
                 <input type="date" defaultValue={endDate} onChange={(e) => setEndDate(e.target.value)} />
-                {/* <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} /> */}
               </View>
 
               <View style={{flex: 1, margin: "8px"}}>
-                <Text>Currency from: <br /></Text>
-                <select value={currencyFrom} onChange={(e) => setCurrencyFrom(e.target.value)}>
-                  {currenciesFromOptions.map(({value, label}) => <option key={value} value={value}>{label}</option>)}
+                <Text>Currency: <br /></Text>
+                <select value={currency} onChange={(e) => setCurrency(e.target.value)}>
+                  {currenciesOptions.map(({value, label}) => <option key={value} value={value}>{label}</option>)}
                 </select>
               </View>
 
               <View style={{flex: 1, margin: "8px"}}>
-                <Text>Currency to: <br /></Text>
-                <select value={currencyTo} onChange={(e) => setCurrencyTo(e.target.value)}>
-                  {currenciesToOptions.map(({value, label}) => <option key={value} value={value}>{label}</option>)}
+                <Text>Vs currency: <br /></Text>
+                <select value={vsCurrency} onChange={(e) => setVsCurrency(e.target.value)}>
+                  {vsCurrenciesOptions.map(({value, label}) => <option key={value} value={value}>{label}</option>)}
                 </select>
               </View>
             </View>
@@ -120,93 +116,21 @@ export const MainPage = () => {
 
        {/* Outputs */}
         <View style={{flexDirection: "column", flex: 4}}>
-          <View style={{flex: 1, margin: "16px"}}>
-            <Text><h3>Trend and when to buy & sell:</h3></Text>
-
-            {dataIsSet &&
-              <ResponsiveContainer width="75%" height={200}>
-                <LineChart data={chartDataPoints}>
-                  <Line type="monotone" dataKey="price" stroke="#666"></Line>
-                  <CartesianGrid stroke="#ccc" />
-                  <XAxis dataKey="date" />
-                  <YAxis name="Price"/>
-                  <Tooltip />
-                </LineChart>
-              </ResponsiveContainer>
-            }
-
-            {dataIsSet && longestDownwardTrend.duration === 0 &&
-              <View>
-                <Text>
-                  There was no downward trend.
-                </Text>
-              </View>
-            }
-
-            {dataIsSet && longestDownwardTrend.duration > 0 && 
-              <View>
-                <Text>
-                  The longest downward trend was from
-                  <b> {longestDownwardTrend.startDate.slice(0, 10)}</b> to
-                  <b> {longestDownwardTrend.endDate.slice(0, 10)}</b>, total of
-                  <b> {longestDownwardTrend.duration}
-                  {(longestDownwardTrend.duration === 1 && <span> day</span>) || <span> days</span>}</b>.
-                </Text>
-              </View>
-            }
-
-            {dataIsSet && !whenToBuyAndSell.shouldBuy &&
-              <View>
-                <Text>
-                  One should not buy.
-                </Text>
-              </View>
-            }
-
-            {dataIsSet && whenToBuyAndSell.shouldBuy &&
-              <View>
-                <Text>
-                  One should buy at
-                  <b> {whenToBuyAndSell.buyDate.slice(0, 10)}</b> for the price of
-                  <b> {whenToBuyAndSell.buyPrice} {currencyTo} per {currencyFrom}</b>.
-                </Text>
-                <Text>
-                  One should sell at
-                  <b> {whenToBuyAndSell.sellDate.slice(0, 10)}</b> for the price of
-                  <b> {whenToBuyAndSell.sellPrice} {currencyTo} per {currencyFrom}</b>.
-                </Text>
-              </View>
-            }
-          </View>
-
-
-          <View style={{flex: 1, margin: "16px"}}>
-            <Text><h3>Trading volume:</h3></Text>
-
-            <View>
-              {dataIsSet &&
-                <ResponsiveContainer width="75%" height={200}>
-                  <LineChart data={chartDataPoints}>
-                    <Line type="monotone" dataKey="total_volume" stroke="#666"></Line>
-                    <CartesianGrid stroke="#ccc" />
-                    <XAxis dataKey="date" />
-                    <YAxis name="TYotal Volume"/>
-                    <Tooltip />
-                  </LineChart>
-                </ResponsiveContainer>
-              }
-
-              {dataIsSet &&
-                <Text>
-                  The highest trading volume was at
-                  <b> {highestTradingVolume.date}</b>, when the total trading volume was
-                  <b> {highestTradingVolume.volume}</b>.
-                </Text>
-              }
-
-            </View>
-          </View>
+          <ComponentTrend
+            showResults={showResults}
+            chartDataPoints={chartDataPoints}
+            longestDownwardTrend={longestDownwardTrend}
+            whenToBuyAndSell={whenToBuyAndSell}
+            currency={currency}
+            vsCurrency={vsCurrency}
+          />
+          <ComponentTradingVolume
+            showResults={showResults}
+            chartDataPoints={chartDataPoints}
+            highestTradingVolume={highestTradingVolume}
+          />
         </View>
+
       </View>
     </View>
   );

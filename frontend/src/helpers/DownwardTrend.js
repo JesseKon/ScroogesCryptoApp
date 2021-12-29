@@ -11,7 +11,7 @@ const GetDownwardTrends = (data) => {
   // })
 
   let downwardTrend = {
-    startDate: (data[0] ? data[0].date : ""),
+    startDate: (data[0] !== undefined ? data[0].date.slice(0, 10) : ""),
     endDate: "",
     duration: -1  // Do not count the first day
   };
@@ -21,7 +21,7 @@ const GetDownwardTrends = (data) => {
     // Trend ongoing
     if (element.price < currentPrice) {
       currentPrice = element.price;
-      downwardTrend.endDate = element.date;
+      downwardTrend.endDate = element.date.slice(0, 10);
       ++downwardTrend.duration;
     }
 
@@ -33,7 +33,7 @@ const GetDownwardTrends = (data) => {
         duration: downwardTrend.duration
       });
 
-      downwardTrend.startDate = element.date;
+      downwardTrend.startDate = element.date.slice(0, 10);
       downwardTrend.endDate = "";
       downwardTrend.duration = 0;
       currentPrice = element.price;

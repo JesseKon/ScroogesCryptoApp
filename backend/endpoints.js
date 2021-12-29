@@ -31,10 +31,10 @@ router.post("/getData", async (req, res) => {
   const endDateUnixTime = Math.floor(new Date(parsedEndDate).getTime() / 1000 + (60 * 60)); // Add 1 hour
   console.log("End date: [" + parsedEndDate + "], unix time: [" + endDateUnixTime + "]");
 
-  const currencyFrom = req.body.currencyFrom;
-  const currencyTo = req.body.currencyTo;
-  const url = "https://api.coingecko.com/api/v3/coins/" + currencyFrom + "/market_chart/"
-    + "range?vs_currency=" + currencyTo + "&from=" + startDateUnixTime + "&to=" + endDateUnixTime;
+  const currency = req.body.currency;
+  const vsCurrency = req.body.vsCurrency;
+  const url = "https://api.coingecko.com/api/v3/coins/" + currency + "/market_chart/"
+    + "range?vs_currency=" + vsCurrency + "&from=" + startDateUnixTime + "&to=" + endDateUnixTime;
   
   const response = await fetch(url);
   const data = await response.json();
