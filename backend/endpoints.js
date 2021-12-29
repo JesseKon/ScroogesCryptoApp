@@ -31,8 +31,8 @@ router.post("/getData", async (req, res) => {
   const endDateUnixTime = Math.floor(new Date(parsedEndDate).getTime() / 1000 + (60 * 60)); // Add 1 hour
   console.log("End date: [" + parsedEndDate + "], unix time: [" + endDateUnixTime + "]");
 
-  const currencyFrom = "bitcoin";
-  const currencyTo = "eur";
+  const currencyFrom = req.body.currencyFrom;
+  const currencyTo = req.body.currencyTo;
   const url = "https://api.coingecko.com/api/v3/coins/" + currencyFrom + "/market_chart/"
     + "range?vs_currency=" + currencyTo + "&from=" + startDateUnixTime + "&to=" + endDateUnixTime;
   
@@ -63,9 +63,9 @@ router.post("/getData", async (req, res) => {
       results.push({
         "unix_time": data.prices[i][0],
         "date": currentDate,
-        "price": data.prices[i][1],
+        "price": data.prices[i][1].toFixed(2),
         "market_cap": data.market_caps[i][1],
-        "total_volume": data.total_volumes[i][1],
+        "total_volume": data.total_volumes[i][1].toFixed(2),
       });
 
       ++dateCounter;

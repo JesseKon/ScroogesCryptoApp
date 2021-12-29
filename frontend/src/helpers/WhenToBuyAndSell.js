@@ -1,6 +1,6 @@
 /**
- * Find the dates when one should buy and sell currency
- * in order to profit from it the most.
+ * Find the dates when one should buy (at lowest price) and when to sell (at highest price) currency
+ * in order to profit the most from it.
  */
 export const GetWhenToBuyAndSell = (data) => {
   let dateRanges = [];
@@ -34,7 +34,7 @@ export const GetWhenToBuyAndSell = (data) => {
       dateRangesBestProfitIndex = i;
     }
   }
-  
+
   return {
     shouldBuy:  dateRanges[dateRangesBestProfitIndex].profit !== 0,
     buyDate:    dateRanges[dateRangesBestProfitIndex].buyDate,

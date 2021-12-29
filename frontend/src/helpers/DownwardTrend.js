@@ -1,12 +1,17 @@
 /**
- * Find all downward trends among given data
+ * Find all downward trends among given data.
+ * Downward trend means, that the currency's price is decreasing.
  */
 const GetDownwardTrends = (data) => {
   let downwardTrends = [];
   let currentPrice = Infinity;
 
+  // data.forEach(element => {
+  //   console.log(element);
+  // })
+
   let downwardTrend = {
-    startDate: "",
+    startDate: data[0].date,
     endDate: "",
     duration: -1  // Do not count the first day
   };
@@ -20,7 +25,7 @@ const GetDownwardTrends = (data) => {
       ++downwardTrend.duration;
     }
 
-    // Trend ended
+    // Trend ended, save it to the array
     else {
       downwardTrends.push({
         startDate: downwardTrend.startDate,
@@ -35,7 +40,7 @@ const GetDownwardTrends = (data) => {
     }
   })
 
-  // Save the last trend
+  // Save the last trend to the array
   downwardTrends.push({
     startDate: downwardTrend.startDate,
     endDate: downwardTrend.endDate, 
