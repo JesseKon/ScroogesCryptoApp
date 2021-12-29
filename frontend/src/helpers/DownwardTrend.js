@@ -11,7 +11,7 @@ const GetDownwardTrends = (data) => {
   // })
 
   let downwardTrend = {
-    startDate: data[0].date,
+    startDate: (data[0] ? data[0].date : ""),
     endDate: "",
     duration: -1  // Do not count the first day
   };

@@ -3,6 +3,10 @@
  * in order to profit the most from it.
  */
 export const GetWhenToBuyAndSell = (data) => {
+  if (!data[0]) {
+    return { shouldBuy: false }
+  }
+
   let dateRanges = [];
 
   // Find the biggest profits between all date ranges
