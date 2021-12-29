@@ -1,6 +1,6 @@
 # Scrooge's Crypto App
 An app to inspect cryptocurrency prices in given time range.
-![](./pic.png)
+![img](./pic.png)
 
 ## Installation
 1. Install npm
